@@ -1,20 +1,14 @@
 class Pedido:
-    def __init__(self, id_pedido, status, data_criacao, entrega_prevista, rota, transporte, valor_total, avaliacao_cliente, comentarios):
-        self._id_pedido = id_pedido #Protegido
+    def __init__(self,status, data_criacao, entrega_prevista, rota, transporte, avaliacao_cliente, comentarios):
         self._status = status #Protegido
         self._data_criacao = data_criacao  #Protegido
         self._entrega_prevista = entrega_prevista #Protegido
         self._rota = rota #Protegido
         self._transporte = transporte  #Protegido
-        self._valor_total = valor_total #Protegido
         self._avaliacao_cliente = avaliacao_cliente  #Protegido
         self._comentarios = comentarios #Protegido
         self.__entregador = None #Privado
         self.__coordenada = None #Privado
-
-    @property
-    def id_pedido(self):
-        return self._id_pedido
 
     @property
     def status(self):
@@ -51,14 +45,6 @@ class Pedido:
     @transporte.setter
     def transporte(self, novo_transporte):
         self._transporte = novo_transporte
-
-    @property
-    def valor_total(self):
-        return self._valor_total
-
-    @valor_total.setter
-    def valor_total(self, novo_valor):
-        self._valor_total = novo_valor
 
     @property
     def avaliacao_cliente(self):
