@@ -48,16 +48,16 @@ class Entregador:
     def media_avaliacoes(self, valor):
         self.__media_avaliacoes = valor
 
-def aceitar_entrega(self, pedido):
+    def aceitar_entrega(self, pedido):
         pedido.atribuir_entregador(self)
         pedido.status = "Em andamento"
         print(f"Entrega {pedido.id_pedido} aceita por {self.__nome}")
         
         
-def finalizar_entrega(self, pedido):
+    def finalizar_entrega(self, pedido):
         pedido.status = "Entregue"
         self.__entregas_finalizadas.append(pedido)
         print(f"Entrega {pedido.id_pedido} finalizada.")
  
-def listar_entregas_finalizadas(self) -> List:
+    def listar_entregas_finalizadas(self) -> List:
         return self.__entregas_finalizadas

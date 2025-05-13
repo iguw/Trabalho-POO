@@ -1,24 +1,27 @@
 from datetime import date
 
 class Pedido:
-    def __init__(self, id_pedido, status, data_criacao, entrega_prevista, rota, transporte, valor_total, avaliacao_cliente, comentarios):
+    def __init__(self, id_pedido, status, entrega_prevista, rota, transporte, valor_total, avaliacao_cliente, comentarios):
     
         self.id_pedido = id_pedido  # Público
         self.status = status  # Público
-        self.data_criacao = data_criacao  # Público
         self._entrega_prevista = entrega_prevista  # Protegido
         self._rota = rota  # Protegido
         self._transporte = transporte  # Protegido
         self._valor_total = valor_total  # Protegido
         self._avaliacao_cliente = avaliacao_cliente  # Protegido
         self._comentarios = comentarios  # Protegido
-        self.__entregador = None  # Privado
-        self.__coordenada = None  # Privado
+        
+        
 
    
     @property
     def id_pedido(self):
         return self._id_pedido
+    
+    @id_pedido.setter
+    def id_pedido(self, novo_id):
+        self._id_pedido = novo_id
 
     @property
     def status(self):
@@ -27,11 +30,7 @@ class Pedido:
     @status.setter
     def status(self, novo_status):
         self._status = novo_status
-
-    @property
-    def data_criacao(self):
-        return self._data_criacao
-
+    
     @property
     def entrega_prevista(self):
         return self._entrega_prevista

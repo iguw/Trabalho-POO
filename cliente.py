@@ -11,6 +11,7 @@ class Cliente:
         self._telefone = telefone #privado
         self._email = email #privado
         self._senha = senha #privado
+        self.historico_pedidos = []
 
     
     @property
@@ -61,7 +62,6 @@ class Cliente:
         pedido = Pedido(
             id_pedido,
             status="Criado",
-            data_criacao=date.today(),
             entrega_prevista=entrega_prevista,
             rota=[self.endereco, endereco_destino],
             transporte=transporte,

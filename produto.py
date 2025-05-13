@@ -1,76 +1,34 @@
-class Pedido:
-    def __init__(self,status, data_criacao, entrega_prevista, rota, transporte, avaliacao_cliente, comentarios):
-        self._status = status #Protegido
-        self._data_criacao = data_criacao  #Protegido
-        self._entrega_prevista = entrega_prevista #Protegido
-        self._rota = rota #Protegido
-        self._transporte = transporte  #Protegido
-        self._avaliacao_cliente = avaliacao_cliente  #Protegido
-        self._comentarios = comentarios #Protegido
-        self.__entregador = None #Privado
-        self.__coordenada = None #Privado
+class Produto:
+    def __init__(self, nome: str, preco: float):
+        self._nome = nome  # Protegido
+        self._preco = preco  # Protegido
+
 
     @property
-    def status(self):
-        return self._status
+    def nome(self):
+        return self._nome
 
-    @status.setter
-    def status(self, novo_status):
-        self._status = novo_status
+  
+    @nome.setter
+    def nome(self, novo_nome):
+        if isinstance(novo_nome, str):
+            self._nome = novo_nome
+        else:
+            raise ValueError("O nome deve ser uma string.")
 
+   
     @property
-    def data_criacao(self):
-        return self._data_criacao
+    def preco(self):
+        return self._preco
 
-    @property
-    def entrega_prevista(self):
-        return self._entrega_prevista
+ 
+    @preco.setter
+    def preco(self, novo_preco):
+        if isinstance(novo_preco, (int, float)) and novo_preco >= 0:
+            self._preco = novo_preco
+        else:
+            raise ValueError("O preço deve ser um número positivo.")
 
-    @entrega_prevista.setter
-    def entrega_prevista(self, nova_data):
-        self._entrega_prevista = nova_data
 
-    @property
-    def rota(self):
-        return self._rota
-
-    @rota.setter
-    def rota(self, nova_rota):
-        self._rota = nova_rota
-
-    @property
-    def transporte(self):
-        return self._transporte
-
-    @transporte.setter
-    def transporte(self, novo_transporte):
-        self._transporte = novo_transporte
-
-    @property
-    def avaliacao_cliente(self):
-        return self._avaliacao_cliente
-
-    @avaliacao_cliente.setter
-    def avaliacao_cliente(self, nota):
-        self._avaliacao_cliente = nota
-
-    @property
-    def comentarios(self):
-        return self._comentarios
-
-    @comentarios.setter
-    def comentarios(self, texto):
-        self._comentarios = texto
-        
-        
-    def registrar_avaliacao(self, nota, comentario):  
-        self._avaliacao_cliente = nota
-        self._comentarios = comentario
-        
-        
-    def atribuir_entregador(self, entregador):  
-        self.__entregador = entregador
-        
-        
-    def atualizar_localizacao(self, coordenada):  
-        self.__coordenada = coordenada
+    def __str__(self):
+        return f"{self._nome} - R${self._preco:.2f}"
