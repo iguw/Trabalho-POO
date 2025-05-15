@@ -1,5 +1,4 @@
-
-
+import re
 import random
 import os
 import pickle
@@ -28,14 +27,11 @@ def carregar_objeto(arquivo, fallback):
 
 
 autenticador = carregar_objeto("autenticador.pkl", Autenticador())
+todos_os_pedidos = carregar_objeto("pedidos.pkl", [])
 
 vendedor1 = vendedor("SuperCell Celulares", "Rua A", "1111-1111", "11111111111111", "x@email.com")
 vendedor2 = vendedor("Loja MagInformática", "Rua B", "2222-2222", "22222222222222", "y@email.com")
 vendedor3 = vendedor("Loja MercadoMercantil", "Rua C", "3333-3333", "33333333333333", "z@email.com")
-
-vendedor1._pedidos_recebidos = []
-vendedor2._pedidos_recebidos = []
-vendedor3._pedidos_recebidos = []
 
 vendedor1.produtos = [
     Produto("Smartphone Galaxy", 2500.0),
@@ -60,6 +56,12 @@ vendedor3.produtos = [
     Produto("Café", 15.0),
     Produto("Macarrão", 6.0)
 ]
+
+
+
+print("="*50)
+print("Bem-vindo à SpeedBox — sua facilitadora em entregas!")
+print("="*50)
 
 def menu_cliente(cliente):
     while True:
@@ -99,7 +101,7 @@ def menu_cliente(cliente):
 
             destino = input("Endereço de entrega: ")
             tipo = input("Tipo de transporte (carro/moto/bike): ")
-            distancia = 5.0  
+            distancia = 5.0
             transporte = Transporte(tipo, taxa_km=2.0, tempo_estimado=20, distancia=distancia)
             taxa_entrega = transporte.calcular_custo()
 
@@ -111,9 +113,10 @@ def menu_cliente(cliente):
                 endereco_destino=destino
             )
             pedido.produtos = produtos_escolhidos
+            todos_os_pedidos.append(pedido)
             vendedor_escolhido.adicionar_pedido(pedido)
-
             salvar_objeto(autenticador, "autenticador.pkl")
+            salvar_objeto(todos_os_pedidos, "pedidos.pkl")
 
             print(f"Pedido criado com sucesso! ID do pedido: {pedido.id_pedido}")
             print(f"Produtos: {[p.nome for p in produtos_escolhidos]}")
@@ -141,6 +144,7 @@ def menu_cliente(cliente):
         else:
             print("Opção inválida.")
 
+
 def menu_entregador(entregador):
     while True:
         print("\n--- Menu Entregador ---")
@@ -154,30 +158,29 @@ def menu_entregador(entregador):
 
         if opcao == "1":
             print("\nPedidos disponíveis:")
-            for vendedor in [vendedor1, vendedor2, vendedor3]:
-                for pedido in vendedor.visualizar_pedidos_recebidos():
-                    if pedido.status == "Criado":
-                        print(f"ID: {pedido.id_pedido} | Valor: R${pedido.valor_total:.2f} | Status: {pedido.status}")
+            for pedido in todos_os_pedidos:
+                if pedido.status == "Criado":
+                    print(f"ID: {pedido.id_pedido} | Valor: R${pedido.valor_total:.2f} | Status: {pedido.status}")
 
         elif opcao == "2":
             id_escolhido = input("Digite o ID do pedido que deseja aceitar: ")
-            for vendedor in [vendedor1, vendedor2, vendedor3]:
-                for pedido in vendedor.visualizar_pedidos_recebidos():
-                    if pedido.id_pedido == id_escolhido and pedido.status == "Criado":
-                        entregador.aceitar_entrega(pedido)
-                        salvar_objeto(autenticador, "autenticador.pkl")
-                        break
+            for pedido in todos_os_pedidos:
+                if pedido.id_pedido == id_escolhido and pedido.status == "Criado":
+                    entregador.aceitar_entrega(pedido)
+                    salvar_objeto(autenticador, "autenticador.pkl")
+                    salvar_objeto(todos_os_pedidos, "pedidos.pkl")
+                    break
             else:
                 print("Pedido não encontrado ou já aceito.")
 
         elif opcao == "3":
             id_finalizar = input("Digite o ID do pedido a finalizar: ")
-            for vendedor in [vendedor1, vendedor2, vendedor3]:
-                for pedido in vendedor.visualizar_pedidos_recebidos():
-                    if pedido.id_pedido == id_finalizar and pedido.status == "Em andamento":
-                        entregador.finalizar_entrega(pedido)
-                        salvar_objeto(autenticador, "autenticador.pkl")
-                        break
+            for pedido in todos_os_pedidos:
+                if pedido.id_pedido == id_finalizar and pedido.status == "Em andamento":
+                    entregador.finalizar_entrega(pedido)
+                    salvar_objeto(autenticador, "autenticador.pkl")
+                    salvar_objeto(todos_os_pedidos, "pedidos.pkl")
+                    break
             else:
                 print("Pedido não encontrado ou ainda não aceito.")
 
@@ -191,6 +194,7 @@ def menu_entregador(entregador):
         else:
             print("Opção inválida.")
 
+
 def menu_vendedor(vendedor):
     while True:
         print("\n--- Menu Vendedor ---")
@@ -202,9 +206,8 @@ def menu_vendedor(vendedor):
         opcao = input("Escolha uma opção: ")
 
         if opcao == "1":
-            pedidos = vendedor.visualizar_pedidos_recebidos()
-            if pedidos:
-                for pedido in pedidos:
+            if todos_os_pedidos:
+                for pedido in todos_os_pedidos:
                     print(f"ID: {pedido.id_pedido} | Status: {pedido.status} | Valor: R${pedido.valor_total:.2f}")
             else:
                 print("Nenhum pedido recebido ainda.")
@@ -236,7 +239,7 @@ if modo == "login":
     senha = input("Digite sua senha: ")
 
     conta_logada = autenticador.autenticar(email, senha)
-    if conta_logada and conta_logada.tipo_usuario == tipo:
+    if conta_logada and conta_logada.tipo_usuario.strip().lower() == tipo.strip().lower():
         usuario = conta_logada.usuario
         if tipo == "cliente":
             menu_cliente(usuario)
@@ -251,12 +254,35 @@ if modo == "login":
 elif modo == "cadastro":
     tipo_usuario = input("Você é (cliente / entregador / vendedor)? ").lower()
     nome = input("Nome completo: ")
-    endereco = input("Endereço: ")
-    telefone = input("Telefone: ")
+    rua = input("Nome da rua: ")
+    numero = input("Número: ")
+    endereco = f"{rua}, Nº {numero}"
+
+    while True:
+        telefone = input("Telefone: ")
+        if telefone.isdigit():
+            break
+        else:
+            print("Telefone inválido! Digite apenas números.")
+
     email = input("Email: ")
 
     while True:
-        senha = input("Senha (mín. 8 caracteres): ")
+        senha = input("Senha (mín. 8 caracteres, 1 maiúscula, 1 símbolo como #@$%): ")
+        if (
+            len(senha) >= 8 and
+            re.search(r"[A-Z]", senha) and
+            re.search(r"[#@\$%]", senha)
+        ):
+            break
+        else:
+            print("Senha inválida! A senha deve ter:")
+            print("- Pelo menos 8 caracteres")
+            print("- Pelo menos uma letra maiúscula")
+            print("- Pelo menos um símbolo como # @ $ %")
+
+    
+    while True:
         try:
             nova_conta = Conta(
                 id_conta=str(random.randint(1000, 9999)),
@@ -270,6 +296,7 @@ elif modo == "cadastro":
             break
         except ValueError as e:
             print(f"Erro: {e}. Tente novamente.")
+
 
     if tipo_usuario == "cliente":
         nova_conta.usuario = Cliente(nome, endereco, telefone, email, senha)
@@ -296,6 +323,5 @@ elif modo == "cadastro":
     elif tipo_usuario == "vendedor":
         menu_vendedor(nova_conta.usuario)
 
-
-else:
-    print("Opção inválida. Encerrando o sistema.")
+    else:
+        print("Opção inválida. Encerrando o sistema.")
