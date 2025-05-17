@@ -2,7 +2,7 @@ from datetime import date
 from pedido import Pedido
 
 
-class Cliente:
+class Cliente: #Essa Classe Representa um cliente que faz pedidos de entrega
     
     def __init__(self, nome: str, endereco: str, telefone: str, email: str, senha: str):
     
@@ -58,7 +58,7 @@ class Cliente:
         self._senha = senha
         
         
-    def solicitar_pedido(self, id_pedido, entrega_prevista, transporte, valor_total, endereco_destino):
+    def solicitar_pedido(self, id_pedido, entrega_prevista, transporte, valor_total, endereco_destino): #Cria um novo pedido para o cliente
         pedido = Pedido(
             id_pedido,
             status="Criado",
@@ -72,17 +72,17 @@ class Cliente:
         self.historico_pedidos.append(pedido)
         return pedido
      
-    def visualizar_historico_pedidos(self):
+    def visualizar_historico_pedidos(self): #Retorna o histórico de pedidos do cliente
         return self.historico_pedidos
 
-    def atualizar_endereco(self, novo_endereco):
+    def atualizar_endereco(self, novo_endereco): #Atualiza o endereço do cliente
         self.endereco = novo_endereco
 
-    def avaliar_entrega(self, pedido, nota, comentario):
+    def avaliar_entrega(self, pedido, nota, comentario): #Avalia a entrega de um pedido
         pedido.registrar_avaliacao(nota, comentario)
         
         
-    def cancelar_pedido(self, pedido):
+    def cancelar_pedido(self, pedido): #Cancela um pedido em andamento
         pedido.status = "Cancelado"
         return True
     

@@ -1,4 +1,4 @@
-class vendedor:
+class vendedor: #Representa um vendedor com informações da empresa e produtos ofertados
     def __init__ (self,nome_empresa, endereco, telefone, cnpj, email):
         self.nome_empresa = nome_empresa # Público
         self.endereco = endereco # Público
@@ -53,7 +53,7 @@ class vendedor:
         self._email = email
 
     @property
-    def pedidos_recebidos(self):
+    def pedidos_recebidos(self): 
         return self._pedidos_recebidos
     
     

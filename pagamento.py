@@ -1,7 +1,7 @@
 from pedido import Pedido
 
 
-class Pagamento:
+class Pagamento: #Gerencia os dados e ações relacionados ao pagamento de pedidos
     def __init__(self, id_pagamento, valor, status, forma_pagamento, transacao_id):
         self.id_pagamento = id_pagamento  # Público
         self.status = status  # Público
@@ -63,26 +63,26 @@ class Pagamento:
     def comprovante(self):
         return self._comprovante
 
-    def processar_pagamento(self) -> bool:
+    def processar_pagamento(self) -> bool: #Processa o pagamento, alterando seu status e gerando comprovante
         if self.validar_pagamento():
             self.status = "Processado"
             self.gerar_comprovante()
             return True
         return False
 
-    def estornar_pagamento(self) -> bool:
+    def estornar_pagamento(self) -> bool: #Estorna o pagamento se for válido
         if self.status == "Processado" and not self.reembolsado:
             self.status = "Estornado"
             self._reembolsado = True
             return True
         return False
 
-    def validar_pagamento(self) -> bool:
+    def validar_pagamento(self) -> bool: #Estorna o pagamento se for válido
         return self.valor > 0 and self.forma_pagamento in ["Débito", "Crédito", "Pix", "Boleto"]
 
-    def gerar_comprovante(self) -> str:
+    def gerar_comprovante(self) -> str: #Gera o texto do comprovante de pagamento
         self._comprovante = f"Comprovante: Pagamento de R${self.valor:.2f} via {self.forma_pagamento}."
         return self._comprovante
 
-    def associar_pedido(self, pedido):
+    def associar_pedido(self, pedido): #Associa o pagamento a um pedido específico
         self._pedido = pedido

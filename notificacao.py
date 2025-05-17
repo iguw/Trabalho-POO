@@ -1,6 +1,6 @@
 from datetime import datetime
 
-class Notificacao:
+class Notificacao: #Representa uma notificação enviada a um usuário
     def __init__(self, id_notificacao: str, mensagem: str, data_hora: datetime, tipo_usuario: str):
         
         self.__id_notificacao = id_notificacao #privado

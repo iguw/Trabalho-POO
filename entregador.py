@@ -4,7 +4,7 @@ from pedido import Pedido
 
 
 
-class Entregador:
+class Entregador: #Essa Classe Representa um entregador responsável por realizar entregas
     
     def __init__(self, nome: str, transporte_tipo: str, capacidade_carga: float, media_avaliacoes: float = 0.0):
         self.__nome = nome  # privado
@@ -48,16 +48,16 @@ class Entregador:
     def media_avaliacoes(self, valor):
         self.__media_avaliacoes = valor
 
-    def aceitar_entrega(self, pedido):
+    def aceitar_entrega(self, pedido): #Aceita um pedido de entrega
         pedido.atribuir_entregador(self)
         pedido.status = "Em andamento"
         print(f"Entrega {pedido.id_pedido} aceita por {self.__nome}")
         
         
-    def finalizar_entrega(self, pedido):
+    def finalizar_entrega(self, pedido): # Finaliza uma entrega e atualiza o histórico
         pedido.status = "Entregue"
         self.__entregas_finalizadas.append(pedido)
         print(f"Entrega {pedido.id_pedido} finalizada.")
  
-    def listar_entregas_finalizadas(self) -> List:
+    def listar_entregas_finalizadas(self) ->List:  #Retorna a lista de entregas já finalizadas
         return self.__entregas_finalizadas

@@ -15,13 +15,14 @@ from vendedor import vendedor
 from produto import Produto
 
 
-def salvar_objeto(obj, arquivo):
+def salvar_objeto(obj, arquivo):   #Salva um objeto em um arquivo usando o módulo pickle.  Parâmetros: obj: qualquer objeto Python serializável
+    
     with open(arquivo, "wb") as f:
         pickle.dump(obj, f)
 
-def carregar_objeto(arquivo, fallback):
+def carregar_objeto(arquivo, fallback): # Carrega um objeto de um arquivo pickle, ou retorna um valor padrão se o arquivo não existir, arquivo: nome do arquivo a ser carregado, fallback: valor padrão a ser retornado se o arquivo não existir
     if not os.path.exists(arquivo):
-        return fallback
+        return fallback #Retor objeto carregado do arquivo ou fallback
     with open(arquivo, "rb") as f:
         return pickle.load(f)
 
@@ -63,7 +64,7 @@ print("="*50)
 print("Bem-vindo à SpeedBox — sua facilitadora em entregas!")
 print("="*50)
 
-def menu_cliente(cliente):
+def menu_cliente(cliente): # Exibe o menu de opções para clientes, cliente: instância da classe Cliente autenticada
     while True:
         print("\n--- Menu Cliente ---")
         print("1. Fazer novo pedido")
@@ -79,7 +80,7 @@ def menu_cliente(cliente):
             print("- Loja MagInformática")
             print("- Loja MercadoMercantil")
 
-            vendedor_escolhido = None
+            vendedor_escolhido = None #Escolhe a loja desejada
             while vendedor_escolhido is None:
                 nome_loja = input("Digite o nome da loja desejada: ").strip().lower()
                 if nome_loja == "supercell celulares":
@@ -89,54 +90,53 @@ def menu_cliente(cliente):
                 elif nome_loja == "loja mercadomercantil":
                     vendedor_escolhido = vendedor3
                 else:
-                    print("Loja não encontrada. Tente novamente.")
+                    print("Loja não encontrada. Tente novamente.") #Se nenhuma loja for encontrada, pede para o usuário tentar novamente
 
-            print("\nProdutos da loja selecionada:")
+            print("\nProdutos da loja selecionada:") #Exibe os produtos disponíveis na loja escolhida
             for i, produto in enumerate(vendedor_escolhido.produtos, 1):
                 print(f"{i}. {produto.nome} - R${produto.preco:.2f}")
 
-            indices = [int(i.strip()) - 1 for i in input("Produtos desejados (ex: 1,3): ").split(",")]
-            produtos_escolhidos = [vendedor_escolhido.produtos[i] for i in indices]
-            valor_produtos = sum(p.preco for p in produtos_escolhidos)
+            indices = [int(i.strip()) - 1 for i in input("Produtos desejados (ex: 1,3): ").split(",")] #Pede para o usuário escolher os produtos desejados
+            produtos_escolhidos = [vendedor_escolhido.produtos[i] for i in indices] #Cria uma lista com os produtos escolhidos
+            valor_produtos = sum(p.preco for p in produtos_escolhidos) #Calcula o valor total dos produtos escolhidos
 
-            destino = input("Endereço de entrega: ")
-            tipo = input("Tipo de transporte (carro/moto/bike): ")
-            distancia = 5.0
-            transporte = Transporte(tipo, taxa_km=2.0, tempo_estimado=20, distancia=distancia)
-            taxa_entrega = transporte.calcular_custo()
+            destino = input("Endereço de entrega: ") #Pede o endereço de entrega
+            tipo = input("Tipo de transporte (carro/moto/bike): ") #Pede o tipo de transporte desejado
+            distancia = 5.0 #Pede a distância da entrega (aqui está fixa, mas poderia ser calculada com base em um serviço de mapas)
+            transporte = Transporte(tipo, taxa_km=2.0, tempo_estimado=20, distancia=distancia)# #Cria uma instância de transporte com os dados fornecidos
+            taxa_entrega = transporte.calcular_custo() #Calcula o custo da entrega com base na distância e taxa por km
 
-            pedido = cliente.solicitar_pedido(
-                id_pedido=str(random.randint(1000, 9999)),
-                entrega_prevista=date.today(),
-                transporte=transporte,
-                valor_total=valor_produtos,
-                endereco_destino=destino
+            pedido = cliente.solicitar_pedido( #Cria um novo pedido com os dados fornecidos
+                id_pedido=str(random.randint(1000, 9999)), # ID gerado aleatoriamente
+                entrega_prevista=date.today(), # Data de entrega prevista
+                transporte=transporte, # Transporte escolhido
+                valor_total=valor_produtos, # Valor total dos produtos
+                endereco_destino=destino # Endereço de entrega
             )
-            pedido.produtos = produtos_escolhidos
-            todos_os_pedidos.append(pedido)
-            vendedor_escolhido.adicionar_pedido(pedido)
-            salvar_objeto(autenticador, "autenticador.pkl")
-            salvar_objeto(todos_os_pedidos, "pedidos.pkl")
+            pedido.produtos = produtos_escolhidos # Adiciona os produtos escolhidos ao pedido
+            todos_os_pedidos.append(pedido) # Adiciona o pedido à lista de pedidos
+            vendedor_escolhido.adicionar_pedido(pedido) # Adiciona o pedido à lista de pedidos do vendedor
+            salvar_objeto(autenticador, "autenticador.pkl") # Salva o autenticador atualizado
+            salvar_objeto(todos_os_pedidos, "pedidos.pkl") # Salva a lista de pedidos atualizada
 
             print(f"Pedido criado com sucesso! ID do pedido: {pedido.id_pedido}")
-            print(f"Produtos: {[p.nome for p in produtos_escolhidos]}")
-            print(f"Total: R${valor_produtos:.2f} + Entrega: R${taxa_entrega:.2f} = R${valor_produtos + taxa_entrega:.2f}")
+            print(f"Produtos: {[p.nome for p in produtos_escolhidos]}") # Lista de produtos escolhidos
+            print(f"Total: R${valor_produtos:.2f} + Entrega: R${taxa_entrega:.2f} = R${valor_produtos + taxa_entrega:.2f}") # Valor total com entrega
 
         elif opcao == "2":
-            for pedido in cliente.visualizar_historico_pedidos():
-                print(f"ID: {pedido.id_pedido} | Status: {pedido.status} | Valor: R${pedido.valor_total}")
+            for pedido in cliente.visualizar_historico_pedidos(): 
+                print(f"ID: {pedido.id_pedido} | Status: {pedido.status} | Valor: R${pedido.valor_total}") # Exibe o histórico de pedidos do cliente
 
         elif opcao == "3":
-            id_pedido = input("ID do pedido a avaliar: ")
+            id_pedido = input("ID do pedido a avaliar: ") #Pede o ID do pedido a ser avaliado
             for pedido in cliente.historico_pedidos:
                 if pedido.id_pedido == id_pedido:
-                    nota = int(input("Nota (0 a 5): "))
+                    nota = int(input("Nota (0 a 5): "))# Pede a nota da avaliação
                     comentario = input("Comentário: ")
-                    cliente.avaliar_entrega(pedido, nota, comentario)
+                    cliente.avaliar_entrega(pedido, nota, comentario) # Avalia a entrega
                     salvar_objeto(autenticador, "autenticador.pkl")
                     print("Avaliação registrada!")
-                    break
-            else:
+                    break # Sai do loop após encontrar o pedido
                 print("Pedido não encontrado.")
 
         elif opcao == "4":
@@ -145,7 +145,7 @@ def menu_cliente(cliente):
             print("Opção inválida.")
 
 
-def menu_entregador(entregador):
+def menu_entregador(entregador): # Exibe o menu de opções para entregadores, entregador: instância da classe Entregador autenticada
     while True:
         print("\n--- Menu Entregador ---")
         print("1. Ver pedidos disponíveis")
@@ -165,19 +165,19 @@ def menu_entregador(entregador):
         elif opcao == "2":
             id_escolhido = input("Digite o ID do pedido que deseja aceitar: ")
             for pedido in todos_os_pedidos:
-                if pedido.id_pedido == id_escolhido and pedido.status == "Criado":
-                    entregador.aceitar_entrega(pedido)
+                if pedido.id_pedido == id_escolhido and pedido.status == "Criado": #Verifica se o pedido está disponível com esse if o pedido é criado
+                    entregador.aceitar_entrega(pedido) #Aceita o pedido
                     salvar_objeto(autenticador, "autenticador.pkl")
                     salvar_objeto(todos_os_pedidos, "pedidos.pkl")
                     break
             else:
-                print("Pedido não encontrado ou já aceito.")
+                print("Pedido não encontrado ou já aceito.") #Se o pedido não for encontrado ou já tiver sido aceito, exibe mensagem de erro
 
         elif opcao == "3":
-            id_finalizar = input("Digite o ID do pedido a finalizar: ")
+            id_finalizar = input("Digite o ID do pedido a finalizar: ") #Pede o ID do pedido a ser finalizado
             for pedido in todos_os_pedidos:
-                if pedido.id_pedido == id_finalizar and pedido.status == "Em andamento":
-                    entregador.finalizar_entrega(pedido)
+                if pedido.id_pedido == id_finalizar and pedido.status == "Em andamento": #Verifica se o pedido está em andamento
+                    entregador.finalizar_entrega(pedido) #Finaliza o pedido
                     salvar_objeto(autenticador, "autenticador.pkl")
                     salvar_objeto(todos_os_pedidos, "pedidos.pkl")
                     break
@@ -187,15 +187,14 @@ def menu_entregador(entregador):
         elif opcao == "4":
             print("\nEntregas finalizadas:")
             for pedido in entregador.listar_entregas_finalizadas():
-                print(f"ID: {pedido.id_pedido} | Status: {pedido.status}")
-
+                print(f"ID: {pedido.id_pedido} | Status: {pedido.status}") #Exibe as entregas finalizadas pelo entregador
         elif opcao == "5":
             break
         else:
             print("Opção inválida.")
 
 
-def menu_vendedor(vendedor):
+def menu_vendedor(vendedor): #Exibe o menu de opções para vendedores, vendedor: instância da classe vendedor autenticada
     while True:
         print("\n--- Menu Vendedor ---")
         print("1. Ver pedidos recebidos")
@@ -207,21 +206,21 @@ def menu_vendedor(vendedor):
 
         if opcao == "1":
             if todos_os_pedidos:
-                for pedido in todos_os_pedidos:
-                    print(f"ID: {pedido.id_pedido} | Status: {pedido.status} | Valor: R${pedido.valor_total:.2f}")
+                for pedido in todos_os_pedidos: #Verifica se há pedidos recebidos
+                    print(f"ID: {pedido.id_pedido} | Status: {pedido.status} | Valor: R${pedido.valor_total:.2f}") # Exibe os pedidos recebidos
             else:
                 print("Nenhum pedido recebido ainda.")
 
         elif opcao == "2":
             print("\nProdutos da loja:")
             for produto in vendedor.produtos:
-                print(f"- {produto.nome}: R${produto.preco:.2f}")
+                print(f"- {produto.nome}: R${produto.preco:.2f}") # Exibe os produtos disponíveis na loja do vendedor
 
-        elif opcao == "3":
+        elif opcao == "3": 
             nome_produto = input("Nome do novo produto: ")
             preco_produto = float(input("Preço do produto (R$): "))
-            novo_produto = Produto(nome_produto, preco_produto)
-            vendedor.produtos.append(novo_produto)
+            novo_produto = Produto(nome_produto, preco_produto) # Cria um novo produto com os dados fornecidos
+            vendedor.produtos.append(novo_produto) # Adiciona o novo produto à lista de produtos do vendedor
             print(f"Produto '{nome_produto}' adicionado com sucesso!")
 
         elif opcao == "4":
@@ -230,7 +229,7 @@ def menu_vendedor(vendedor):
             print("Opção inválida.")
 
 
-print("Você deseja logar ou se cadastrar? (login/cadastro): ", end="")
+print("Você deseja logar ou se cadastrar? (login/cadastro): ", end="") #Pede para o usuário escolher entre logar ou se cadastrar
 modo = input().strip().lower()
 
 if modo == "login":
@@ -239,11 +238,11 @@ if modo == "login":
     senha = input("Digite sua senha: ")
 
     conta_logada = autenticador.autenticar(email, senha)
-    if conta_logada and conta_logada.tipo_usuario.strip().lower() == tipo.strip().lower():
+    if conta_logada and conta_logada.tipo_usuario.strip().lower() == tipo.strip().lower(): #Verifica se a conta logada corresponde ao tipo de usuário
         usuario = conta_logada.usuario
-        if tipo == "cliente":
-            menu_cliente(usuario)
-        elif tipo == "entregador":
+        if tipo == "cliente": # Verifica o tipo de usuário e chama a função correspondente
+            menu_cliente(usuario) 
+        elif tipo == "entregador": # 
             menu_entregador(usuario)
         elif tipo == "vendedor":
             menu_vendedor(usuario)
@@ -251,8 +250,8 @@ if modo == "login":
         print("Login inválido ou tipo incorreto.")
         exit()
 
-elif modo == "cadastro":
-    tipo_usuario = input("Você é (cliente / entregador / vendedor)? ").lower()
+elif modo == "cadastro":  #Pede para o usuário se cadastrar
+    tipo_usuario = input("Você é (cliente / entregador / vendedor)? ").lower() 
     nome = input("Nome completo: ")
     rua = input("Nome da rua: ")
     numero = input("Número: ")
@@ -271,8 +270,8 @@ elif modo == "cadastro":
         senha = input("Senha (mín. 8 caracteres, 1 maiúscula, 1 símbolo como #@$%): ")
         if (
             len(senha) >= 8 and
-            re.search(r"[A-Z]", senha) and
-            re.search(r"[#@\$%]", senha)
+            re.search(r"[A-Z]", senha) and # Verifica se há pelo menos uma letra maiúscula
+            re.search(r"[#@\$%]", senha) # Verifica se há pelo menos um símbolo
         ):
             break
         else:
@@ -294,11 +293,11 @@ elif modo == "cadastro":
             )
             nova_conta.senha = senha
             break
-        except ValueError as e:
-            print(f"Erro: {e}. Tente novamente.")
+        except ValueError as e: # Verifica se a senha atende aos requisitos 
+            print(f"Erro: {e}. Tente novamente.") # Se a senha não atender aos requisitos, exibe mensagem de erro
 
 
-    if tipo_usuario == "cliente":
+    if tipo_usuario == "cliente": # Verifica o tipo de usuário e cria a conta correspondente
         nova_conta.usuario = Cliente(nome, endereco, telefone, email, senha)
     elif tipo_usuario == "entregador":
         transporte_tipo = input("Tipo de transporte (ex: moto, carro): ")
@@ -311,17 +310,16 @@ elif modo == "cadastro":
         print("Tipo de usuário inválido.")
         exit()
 
-    autenticador.cadastrar_conta(nova_conta)
-    salvar_objeto(autenticador, "autenticador.pkl")
+    autenticador.cadastrar_conta(nova_conta) # Adiciona a nova conta ao autenticador
+    salvar_objeto(autenticador, "autenticador.pkl") # Salva o autenticador atualizado 
+    print(f"Cadastro realizado com sucesso! Bem-vindo(a), {nome}.") # Exibe mensagem de boas-vindas
 
-    print(f"Cadastro realizado com sucesso! Bem-vindo(a), {nome}.")
-
-    if tipo_usuario == "cliente":
+    if tipo_usuario == "cliente": # Se o tipo de usuário for cliente, chama a função correspondente
         menu_cliente(nova_conta.usuario)
-    elif tipo_usuario == "entregador":
+    elif tipo_usuario == "entregador": # Se o tipo de usuário for entregador, chama a função correspondente
         menu_entregador(nova_conta.usuario)
-    elif tipo_usuario == "vendedor":
+    elif tipo_usuario == "vendedor": # Se o tipo de usuário for vendedor, chama a função correspondente
         menu_vendedor(nova_conta.usuario)
 
     else:
-        print("Opção inválida. Encerrando o sistema.")
+        print("Opção inválida. Encerrando o sistema.") # Se a opção for inválida, encerra o sistema

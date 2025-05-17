@@ -1,6 +1,6 @@
 from datetime import date
 
-class Pedido:
+class Pedido: #Essa Classe Representa um pedido de entrega feito por um cliente
     def __init__(self, id_pedido, status, entrega_prevista, rota, transporte, valor_total, avaliacao_cliente, comentarios):
     
         self.id_pedido = id_pedido  # Público
@@ -24,7 +24,7 @@ class Pedido:
         self._id_pedido = novo_id
 
     @property
-    def status(self):
+    def status(self): 
         return self._status
 
     @status.setter
@@ -80,24 +80,25 @@ class Pedido:
     def transporte(self, transporte):
         self._transporte = transporte
 
-    def calcular_valor_entrega(self) -> float:
+    def calcular_valor_entrega(self) -> float: #Calcula o valor da entrega com base no número de endereços da rota, nesse caso, 5 reais por endereço fixo nao consegui pensar em algo para calcular o valor com base em distancia
+        
         if self._rota:
             return len(self._rota) * 5
         return 0.0
 
-    def gerar_rota(self, endereco_origem: str, endereco_destino: str):
+    def gerar_rota(self, endereco_origem: str, endereco_destino: str): #Define a rota entre origem e destino
         self._rota = [endereco_origem, endereco_destino]
 
-    def atribuir_entregador(self, entregador):
+    def atribuir_entregador(self, entregador): #"Associa um entregador ao pedido
         self.__entregador = entregador
 
-    def atualizar_localizacao(self, coordenada):
+    def atualizar_localizacao(self, coordenada): #"Atualiza a localização atual do pedido
         self.__coordenada = coordenada
 
     def calcular_preco_final(self) -> float:
-        return self.valor_total + self.calcular_valor_entrega()
+        return self.valor_total + self.calcular_valor_entrega() #Calcula o preço final incluindo produtos e entrega
 
-    def registrar_avaliacao(self, nota: int, comentario: str):
+    def registrar_avaliacao(self, nota: int, comentario: str): #Registra avaliação e comentário do cliente para o pedido
         self.avaliacao_cliente = nota
         self.comentarios = comentario
         

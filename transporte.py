@@ -1,10 +1,10 @@
-class Coordenada:
+class Coordenada: #Representa uma coordenada geográfica com latitude e longitude
     def __init__(self, latitude: float, longitude: float):
         self.latitude = latitude
         self.longitude = longitude
 
 
-class Transporte:
+class Transporte: #Representa um meio de transporte utilizado para entrega, com cálculo de custo e tempo
     def __init__(self, tipo_veiculo: str, taxa_km: float, tempo_estimado: float, distancia: float):
         self.__tipo_veiculo = tipo_veiculo  # Privado
         self.__taxa_km = taxa_km  # Privado
@@ -35,7 +35,7 @@ class Transporte:
     def tempo_estimado(self):
         return self.__tempo_estimado
 
-    @tempo_estimado.setter
+    @tempo_estimado.setter  #Define a taxa por quilômetro, raises ValueError: Se o valor for negativo
     def tempo_estimado(self, valor):
         if valor > 0:
             self.__tempo_estimado = valor
@@ -53,11 +53,11 @@ class Transporte:
         else:
             raise ValueError("A distância deve ser positiva.")
 
-    def calcular_custo(self):
+    def calcular_custo(self): #Calcula o custo total da entrega com base na distância e taxa por km, igual o tempo estimado usei um valor fixo
         return self.__taxa_km * self.__distancia
 
-    def calcular_tempo(self):
+    def calcular_tempo(self): #Retorna o tempo estimado de entrega
         return self.__tempo_estimado
 
-    def atualizar_localizacao(self, coord: Coordenada):
+    def atualizar_localizacao(self, coord: Coordenada): #Atualiza a última localização conhecida do transporte
         self.__atualizar_localizacao = coord
