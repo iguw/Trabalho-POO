@@ -22,7 +22,7 @@ def salvar_objeto(obj, arquivo):   #Salva um objeto em um arquivo usando o módu
 
 def carregar_objeto(arquivo, fallback): # Carrega um objeto de um arquivo pickle, ou retorna um valor padrão se o arquivo não existir, arquivo: nome do arquivo a ser carregado, fallback: valor padrão a ser retornado se o arquivo não existir
     if not os.path.exists(arquivo):
-        return fallback #Retor objeto carregado do arquivo ou fallback
+        return fallback #Retorna objeto carregado do arquivo ou fallback
     with open(arquivo, "rb") as f:
         return pickle.load(f)
 
@@ -122,6 +122,39 @@ def menu_cliente(cliente): # Exibe o menu de opções para clientes, cliente: in
             print(f"Pedido criado com sucesso! ID do pedido: {pedido.id_pedido}")
             print(f"Produtos: {[p.nome for p in produtos_escolhidos]}") # Lista de produtos escolhidos
             print(f"Total: R${valor_produtos:.2f} + Entrega: R${taxa_entrega:.2f} = R${valor_produtos + taxa_entrega:.2f}") # Valor total com entrega
+            
+            
+            formas_disponiveis = ["Débito", "Crédito", "Pix", "Boleto"]
+            print("\nFormas de pagamento disponíveis:")
+            for i, forma in enumerate(formas_disponiveis, 1):
+                print(f"{i}. {forma}")
+            indice_pagamento = int(input("Escolha a forma de pagamento (número): ")) - 1
+            forma_escolhida = formas_disponiveis[indice_pagamento]
+
+            pagamento = Pagamento(
+                id_pagamento=str(random.randint(10000, 99999)),
+                valor=pedido.calcular_preco_final(),
+                status="Pendente",
+                forma_pagamento=forma_escolhida,
+                transacao_id=str(random.randint(1000000, 9999999))
+)
+
+            pagamento.associar_pedido(pedido)
+
+            if pagamento.processar_pagamento():
+                print("Pagamento processado com sucesso!")
+                print(f"ID do Pagamento: {pagamento.id_pagamento}")
+                print(pagamento.comprovante)
+            else:
+                print("Falha no processamento do pagamento.")
+
+            
+            
+            
+            
+            
+            
+            
 
         elif opcao == "2":
             for pedido in cliente.visualizar_historico_pedidos(): 
@@ -138,11 +171,7 @@ def menu_cliente(cliente): # Exibe o menu de opções para clientes, cliente: in
                     print("Avaliação registrada!")
                     break # Sai do loop após encontrar o pedido
                 print("Pedido não encontrado.")
-
-        elif opcao == "4":
-            break
-        else:
-            print("Opção inválida.")
+    
 
 
 def menu_entregador(entregador): # Exibe o menu de opções para entregadores, entregador: instância da classe Entregador autenticada
