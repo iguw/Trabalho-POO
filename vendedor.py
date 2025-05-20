@@ -6,6 +6,7 @@ class vendedor: #Representa um vendedor com informações da empresa e produtos 
         self.cnpj = cnpj # Público
         self.email = email # Público
         self._pedidos_recebidos = []
+        self.produtos = []
         
         
 

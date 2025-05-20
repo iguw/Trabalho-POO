@@ -83,11 +83,11 @@ def menu_cliente(cliente): # Exibe o menu de opções para clientes, cliente: in
             vendedor_escolhido = None #Escolhe a loja desejada
             while vendedor_escolhido is None:
                 nome_loja = input("Digite o nome da loja desejada: ").strip().lower()
-                if nome_loja == "supercell celulares":
+                if nome_loja in ["supercell celulares", "celulares", "supercell"]:
                     vendedor_escolhido = vendedor1
-                elif nome_loja == "loja maginformática":
+                elif nome_loja in ["loja maginformática", "maginformática", "mag informatica"]:
                     vendedor_escolhido = vendedor2
-                elif nome_loja == "loja mercadomercantil":
+                elif nome_loja in ["loja mercadomercantil", "mercadomercantil", "mercado mercantil"]:
                     vendedor_escolhido = vendedor3
                 else:
                     print("Loja não encontrada. Tente novamente.") #Se nenhuma loja for encontrada, pede para o usuário tentar novamente
@@ -103,7 +103,7 @@ def menu_cliente(cliente): # Exibe o menu de opções para clientes, cliente: in
             destino = input("Endereço de entrega: ") #Pede o endereço de entrega
             tipo = input("Tipo de transporte (carro/moto/bike): ") #Pede o tipo de transporte desejado
             distancia = 5.0 #Pede a distância da entrega (aqui está fixa, mas poderia ser calculada com base em um serviço de mapas)
-            transporte = Transporte(tipo, taxa_km=2.0, tempo_estimado=20, distancia=distancia)# #Cria uma instância de transporte com os dados fornecidos
+            transporte = Transporte(tipo, taxa_km=2.0, tempo_estimado=20, distancia=distancia)#Cria uma instância de transporte com os dados fornecidos
             taxa_entrega = transporte.calcular_custo() #Calcula o custo da entrega com base na distância e taxa por km
 
             pedido = cliente.solicitar_pedido( #Cria um novo pedido com os dados fornecidos
@@ -242,8 +242,12 @@ def menu_vendedor(vendedor): #Exibe o menu de opções para vendedores, vendedor
 
         elif opcao == "2":
             print("\nProdutos da loja:")
-            for produto in vendedor.produtos:
-                print(f"- {produto.nome}: R${produto.preco:.2f}") # Exibe os produtos disponíveis na loja do vendedor
+            
+            if not vendedor.produtos:
+                print("Nenhum produto cadastrado.")
+            else:
+                    for produto in vendedor.produtos:
+                        print(f"Nome: {produto.nome} | Preço: R${produto.preco:.2f}")
 
         elif opcao == "3": 
             nome_produto = input("Nome do novo produto: ")
