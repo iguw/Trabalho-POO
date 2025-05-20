@@ -19,6 +19,47 @@ class Conta: #Representa uma conta de usuário no sistema
             self.__senha = nova_senha
         else:
             raise ValueError("A senha deve ter pelo menos 8 caracteres.")
+        
+    
+    @property
+    def id_conta(self):
+        return self._id_conta
+
+    @id_conta.setter
+    def id_conta(self, valor):
+        self._id_conta = valor
+
+    @property
+    def nome_cliente(self):
+        return self._nome_cliente
+
+    @nome_cliente.setter
+    def nome_cliente(self, valor):
+        self._nome_cliente = valor
+
+    @property
+    def email(self):
+        return self._email
+
+    @email.setter
+    def email(self, valor):
+        self._email = valor
+
+    @property
+    def telefone(self):
+        return self._telefone
+
+    @telefone.setter
+    def telefone(self, valor):
+        self._telefone = valor
+
+    @property
+    def endereco(self):
+        return self._endereco
+
+    @endereco.setter
+    def endereco(self, novo_endereco):
+        self._endereco = novo_endereco
 
 
     def autenticar(self,email,senha): #Verifica se o email e senha correspondem à conta
